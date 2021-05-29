@@ -20,6 +20,12 @@
         sta     $D506
         lda     #$7E
         sta     $FF00
+        ldx     #(.end - .resetcode) - 1
+-
+        lda     .resetcode,x
+        sta     $03e4,x
+        dex
+        bpl     -
         lda     $D030
         and     #$FE
         sta     $D030
@@ -36,5 +42,10 @@
 .reudata
 !byte $91, $00, $c0, $40, $bc 
 !byte $00, $80, $00, $00, $00
+
+.resetcode
+        lda     #$7e
+        sta     $ff00
+        jmp     $c000
 
 .end
