@@ -1,6 +1,10 @@
 # GRB128
 GEOS 128 restart from REU image
 
+By Bart van Leeuwen in 2021
+
+This software is in the public domain.
+
 Note, this does not try to load an REU image, it assumes the REU is preloaded, 
 and does not check in any way if this is actually the case (or if an REU is pressent at all)
 

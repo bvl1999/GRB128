@@ -1,3 +1,9 @@
+; GEOS 128 restart from REU image
+;
+; By Bart van Leeuwen in 2021
+;
+; This software is in the public domain.
+
 *=$1c01
 
 !byte <.end,>.end,$01,$00,$9e               ; Line 1 SYS7182
