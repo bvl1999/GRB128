@@ -6,7 +6,9 @@ By Bart van Leeuwen in 2021
 This software is in the public domain.
 
 Note, this does not try to load an REU image, it assumes the REU is preloaded, 
-and does not check in any way if this is actually the case (or if an REU is pressent at all)
+It will fail, and hopefully give some usefull message about that if there is no REU, the REU is
+too small, or the GEOS rboot image is not found (REU not preloaded, or possibly wrong GEOS 
+version)
 
 This is an example program, it is based on the 128 rboot program included in GEOS 128.
 It is intended to demonstrate how the GEOS ramboot feature can be used to 'resume' from a
