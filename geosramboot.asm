@@ -25,7 +25,6 @@
         cmp     #$f8           ; note that the top 5 bits of this register are always 1, regardless of the value stored. This behavior is unique to the REU BANK register
         bne     .reuerror      ; and combined with previous check lets us determine if we really have an REU 
         lda     $D506          ; shared ram and dma target register
-        and     #$30           ; keep the 'unused' bits (why exactly? this shouldn't really matter)
         ora     #$47           ; enable 16k shared ram at bottom and top of memory (note: $0000-$3fff come from ram block 0, $c000-$ffff come from ram block 1)
                                ; also, set DMA target to ram block 1 for the REU to ram copy (and yes, this also tells VIC2 to get its data from ram block 1..)
         sta     $D506          ; and store this configuration.
@@ -45,9 +44,6 @@
         sta     $DF01,y
         dey
         bpl     -
--       lda     $DF00          ; ensure REU is done (GEOSism, this should not be needed in this specific situation, but is needed when using the $FF00 trigger and having external code (irq) trigger the actual transfer)
-        and     #$40
-        beq     -
         ldx     #$05 
 -
         lda     $c000,x        ; does this look like a GEOS rboot loader?
@@ -110,4 +106,3 @@
 .resetcode_end
 
 .end
-!byte 0,0
