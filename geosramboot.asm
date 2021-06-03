@@ -16,14 +16,19 @@
         sei
         lda     #$00
         sta     $ff00          ; select bank 15: kernal, monitor, editor, basic roms enabled, io enabled.
-        lda     $df00          ; test bit 4 of REU status register
-        and     #$10
-        beq     .reuerror      ; no REU pressent, or REU too small (size jumper not set)
-        lda     #$00           ; test the behavior of the BANK register, as above check does not actually guarantee the REU is pressent.
+        lda     $df06          ; REU bank register
+        pha                    ; store it, we may need to restore it later
+        lda     #$07           ; we are going to set the low 3 bits.
+        sta     $df06          
+        lda     $df06          ; and see what value the register (or whatever it is, we don't know yet) holds..
+        cmp     #$ff           ; the bank register forces the high 5 bits to 1, so after setting the low 3 bits to 1, we should get 255 as a result
+        bne     .reuerror      ; no REU pressent.
+        lda     #$00           ; test clearing all bits in the REU bank register
         sta     $df06
-        lda     $df06
+        lda     $df06          ; and see what value the register holds
         cmp     #$f8           ; note that the top 5 bits of this register are always 1, regardless of the value stored. This behavior is unique to the REU BANK register
         bne     .reuerror      ; and combined with previous check lets us determine if we really have an REU 
+        pla                    ; we don't need this anymore.
         lda     $D506          ; shared ram and dma target register
         ora     #$47           ; enable 16k shared ram at bottom and top of memory (note: $0000-$3fff come from ram block 0, $c000-$ffff come from ram block 1)
                                ; also, set DMA target to ram block 1 for the REU to ram copy (and yes, this also tells VIC2 to get its data from ram block 1..)
@@ -44,9 +49,9 @@
         sta     $DF01,y
         dey
         bpl     -
-        ldx     #$05 
+        ldx     #$08
 -
-        lda     $c000,x        ; does this look like a GEOS rboot loader?
+        lda     $c006,x        ; does this look like a GEOS rboot loader?
         cmp     .sig,x
         bne     .sigerror
         dex
@@ -55,6 +60,8 @@
 
 ; print message and exit, note this must be called with a default shared ram config and with a bank 15 memory config
 .reuerror
+        pla
+        sta     $df06          ; probably does nothing, but.. just in case something mapped some ram here, we restore the original content...
         ldx     #$00
 -
         lda     .error1msg,x
@@ -82,13 +89,12 @@
         cli
         rts
 
-; a GEOS rboot loader should start with this
+; a GEOS rboot loader should have this at offset $0006
 .sig
-        jmp     $c01b
-        jmp     $5000
+!tx     "geos boot"
 
 .error1msg
-!tx "reu not found or too small"
+!tx "reu not detected"
 !byte $0d, $00
 
 .error2msg
