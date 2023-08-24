@@ -14,6 +14,8 @@ This is an example program, it is based on the 128 rboot program included in GEO
 It is intended to demonstrate how the GEOS ramboot feature can be used to 'resume' from a
 preloaded REU.
 
+Note, this only works with GEOS 2.0, it does not work with Megapatch 3 or Wheels
+
 How to 'build'
 
 Make sure you have acme and GNU make installed, and type 'make'
